@@ -1,8 +1,0 @@
-body { font-family: -apple-system, Arial, sans-serif; margin: 32px; background: #f6f7fb; color: #222; }
-h1 { color: #2b4c7e; }
-table { border-collapse: collapse; background: #fff; min-width: 520px; }
-th, td { border: 1px solid #c9d1e0; padding: 8px 14px; text-align: left; }
-th { background: #2b4c7e; color: #fff; }
-tr:nth-child(even) td { background: #eef2f9; }
-.flash { background: #e3f6e5; border: 1px solid #7cc287; padding: 10px 14px; border-radius: 6px; display: inline-block; }
-form input, form button { padding: 6px 10px; margin-right: 6px; }
