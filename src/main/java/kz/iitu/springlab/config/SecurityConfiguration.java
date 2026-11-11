@@ -24,8 +24,11 @@ public class SecurityConfiguration {
                         .requestMatchers("/books/**").hasRole("ADMIN") // create, edit, delete
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().denyAll())
-                .formLogin(form -> form.defaultSuccessUrl("/books", true).permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/?logout"))
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/books", true)
+                        .permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/login?logout"))
                 .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
                 .headers(h -> h.frameOptions(f -> f.sameOrigin()));
         return http.build();

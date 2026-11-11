@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign in — Catalogue</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<h1>Catalogue — sign in</h1>
+
+<p th:if="${param.error}" class="flash" style="color:#b00020">
+    Invalid username or password.
+    <span th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}"
+          th:text="'(' + ${session.SPRING_SECURITY_LAST_EXCEPTION.message} + ')'"></span>
+</p>
+
+<p th:if="${param.logout}" class="flash" style="color:#1b5e20">
+    You have been logged out.
+</p>
+
+<form th:action="@{/login}" method="post">
+    <p><input name="username" placeholder="Username" required autofocus></p>
+    <p><input name="password" type="password" placeholder="Password" required></p>
+    <button type="submit">Sign in</button>
+</form>
+
+<p><a href="/">← Start page</a></p>
+</body>
+</html>
