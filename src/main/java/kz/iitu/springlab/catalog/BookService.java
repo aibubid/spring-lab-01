@@ -1,5 +1,6 @@
 package kz.iitu.springlab.catalog;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -39,9 +40,11 @@ public class BookService {
         return Optional.of(repository.save(new Book(id, book.title(), book.author(), book.year())));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean delete(long id) {
         return repository.deleteById(id);
     }
+
     // Variant 1: search by a fragment of the title, case-insensitive
     public List<Book> searchByTitle(String q) {
         String needle = q.toLowerCase();

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Administration</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<h1>Administration — users</h1>
+<table>
+    <tr><th>#</th><th>Username</th><th>Enabled</th><th>Roles</th></tr>
+    <tr th:each="u : ${users}">
+        <td th:text="${u.id}">1</td>
+        <td th:text="${u.username}">user</td>
+        <td th:text="${u.enabled}">true</td>
+        <td th:text="${u.roles}">[USER]</td>
+    </tr>
+</table>
+<p><a th:href="@{/books}">← Catalogue</a></p>
+</body>
+</html>
