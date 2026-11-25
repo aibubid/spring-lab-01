@@ -95,4 +95,17 @@ class BookServiceTest {
                 .extracting(Book::getTitle)
                 .containsExactly(expectedTitle);
     }
+    // Task 5: the other way through the yellow condition in findAll:
+    // a blank author ("   ") means "no filter", and the result is sorted by id
+    @Test
+    void blankAuthorFilterReturnsAllBooksSortedById() {
+        given(repository.findAll()).willReturn(List.of(
+                new Book(3L, "Spring in Action", "Craig Walls", 2022, true),
+                new Book(1L, "Effective Java", "Joshua Bloch", 2018, true),
+                new Book(2L, "Clean Code", "Robert Martin", 2008, true)));
+
+        assertThat(service.findAll("   "))
+                .extracting(Book::getTitle)
+                .containsExactly("Effective Java", "Clean Code", "Spring in Action");
+    }
 }
