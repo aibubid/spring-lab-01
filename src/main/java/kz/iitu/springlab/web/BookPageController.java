@@ -1,6 +1,7 @@
 package kz.iitu.springlab.web;
 
 import kz.iitu.springlab.catalog.Book;
+import kz.iitu.springlab.catalog.BookRequest;
 import kz.iitu.springlab.catalog.BookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,8 +34,8 @@ public class BookPageController {
                          @RequestParam String author,
                          @RequestParam int year,
                          RedirectAttributes redirect) {
-        Book saved = service.create(new Book(null, title, author, year));
-        redirect.addFlashAttribute("message", "Book «" + saved.title() + "» has been added");
+        Book saved = service.create(new BookRequest(title, author, year));
+        redirect.addFlashAttribute("message", "Book «" + saved.getTitle() + "» has been added");
         return "redirect:/books";   // 302; the browser performs a GET
     }
 }

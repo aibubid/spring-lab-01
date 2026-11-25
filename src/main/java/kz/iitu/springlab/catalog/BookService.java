@@ -2,12 +2,13 @@ package kz.iitu.springlab.catalog;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class BookService {
 
     private final BookRepository repository;
@@ -20,37 +21,50 @@ public class BookService {
     public List<Book> findAll(String author) {
         return repository.findAll().stream()
                 .filter(b -> author == null || author.isBlank()
-                        || b.author().toLowerCase().contains(author.toLowerCase()))
-                .sorted(Comparator.comparing(Book::id))
+                        || b.getAuthor().toLowerCase().contains(author.toLowerCase()))
+                .sorted(Comparator.comparing(Book::getId))
                 .toList();
     }
 
-    public Optional<Book> findById(long id) {
-        return repository.findById(id);
+    public Book byId(long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
-    public Book create(Book book) {
-        return repository.save(new Book(null, book.title(), book.author(), book.year()));
+    @Transactional
+    public Book create(BookRequest request) {
+        return repository.save(new Book(request.title(), request.author(), request.year()));
     }
 
-    public Optional<Book> replace(long id, Book book) {
-        if (!repository.existsById(id)) {
-            return Optional.empty();
-        }
-        return Optional.of(repository.save(new Book(id, book.title(), book.author(), book.year())));
+    @Transactional
+    public Book replace(long id, BookRequest request) {
+        Book book = byId(id);
+        book.update(request.title(), request.author(), request.year());
+        return repository.save(book);
     }
 
+    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public boolean delete(long id) {
-        return repository.deleteById(id);
+    public void delete(long id) {
+        if (!repository.existsById(id)) {
+            throw new BookNotFoundException(id);
+        }
+        repository.deleteById(id);
+    }
+
+    // Lab 12, variant 1: archiving. Archiving an already archived book is an error, not a silent save.
+    @Transactional
+    public Book archive(long id) {
+        Book book = byId(id);
+        if (!book.isAvailable()) {
+            throw new BookAlreadyArchivedException(id);
+        }
+        book.archive();
+        return repository.save(book);
     }
 
     // Variant 1: search by a fragment of the title, case-insensitive
     public List<Book> searchByTitle(String q) {
-        String needle = q.toLowerCase();
-        return repository.findAll().stream()
-                .filter(b -> b.title().toLowerCase().contains(needle))
-                .sorted(Comparator.comparing(Book::id))
-                .toList();
+        return repository.findByTitleContainingIgnoreCaseAndAvailableTrueOrderByIdAsc(q);
     }
 }
